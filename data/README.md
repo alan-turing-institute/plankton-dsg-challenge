@@ -1,5 +1,4 @@
-# Rapid identification of plankton using machine learning - Alan Turing
-Institute Data Study Group Challenge
+# Rapid identification of plankton using machine learning - Alan Turing Institute Data Study Group Challenge
 
 ## Introduction
 
