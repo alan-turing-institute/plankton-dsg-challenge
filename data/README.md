@@ -1,7 +1,7 @@
-Rapid identification of plankton using machine learning - Alan Turing
+# Rapid identification of plankton using machine learning - Alan Turing
 Institute Data Study Group Challenge
 
-# Introduction
+## Introduction
 
 The Plankton Imager (PI) is a high speed imaging and analysis
 instrument that photographs plankton in the size range 100 micron to
@@ -17,7 +17,7 @@ include examples of detritus (sand, seaweed, particulates etc.)
 The dataset was assembled by Cefas for use by the Alan Turing
 Institute Data Study Group, December 2021.
 
-# Ecological background
+## Ecological background
 
 Zooplankton taxonomy is confusing and sometimes conflicting. The
 maximum discernible taxonomic rank (from images or otherwise) does not
@@ -31,7 +31,7 @@ label is an increase in taxonomic resolution, although this resolution
 will vary between taxonomic groups. One category may go from order to
 class to order, another from order to family.
 
-# The challenge
+## The challenge
 
 1. Build a classifier that can distinguish between copepods and non
    copepods in images that do not include detritus.
@@ -45,7 +45,7 @@ Please report the accuracy and precision of your classifiers along
 with their computational performance (i.e., how long does your
 classifier take to classify 1000 images?).
 
-# Notes
+## Notes
 
 label1 is one of "zooplankton" or "detritus".
 
@@ -56,13 +56,13 @@ label3 is one of 40 different kinds of specimens or "detritus_level3"
 fold is one of 0 - 9, a randomly assigned grouping that may be useful
 if you choose to use cross fold validation.
 
-# Licence
+## Licence
 
 These data are copyright Centre for Environment, Fisheries and
 Aquaculture Science (CEFAS) and Plankton Analytics Ltd and are
 provided for the purposes and duration of the data study group only.
 
-# References
+## References
 
 Pitois SG, et al. (2021) A first approach to build and test the
 Copepod Mean Size and Total Abundance (CMSTA) ecological indicator
