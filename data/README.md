@@ -48,9 +48,9 @@ classifier take to classify 1000 images?).
 
 label1 is one of "zooplankton" or "detritus".
 
-label2 is one of "noncopepod", "copepod" or "detritus_level2"
+label2 is one of "noncopepod", "copepod" or "detritus".
 
-label3 is one of 40 different kinds of specimens or "detritus_level3"
+label3 is one of 40 different kinds of specimens or "detritus".
 
 ## Licence
 
