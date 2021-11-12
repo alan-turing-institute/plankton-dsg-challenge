@@ -52,9 +52,6 @@ label2 is one of "noncopepod", "copepod" or "detritus_level2"
 
 label3 is one of 40 different kinds of specimens or "detritus_level3"
 
-fold is one of 0 - 9, a randomly assigned grouping that may be useful
-if you choose to use cross fold validation.
-
 ## Licence
 
 These data are copyright Centre for Environment, Fisheries and
