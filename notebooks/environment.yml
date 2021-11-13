@@ -12,6 +12,7 @@ dependencies:
   - matplotlib
   - numpy
   - scipy
+  - scikit-learn
   - pandas
   - fsspec
   - pyyaml
