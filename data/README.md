@@ -18,22 +18,24 @@ Institute Data Study Group, December 2021.
 
 ## Ecological background
 
-Zooplankton taxonomy is confusing and sometimes conflicting. The
-maximum discernible taxonomic rank (from images or otherwise) does not
-infer ecological importance. For example, copepods account for
-approx. 70-80 % of the zooplankton and serve as food for fish larvae
-and many adult fish and important in the global carbon
-cycle. Identifying them to species label (impossible with imagery) is
-'less important' than classifying all images to copepod. For this
-reason, we have divided the data into three idealised labels. Each
-label is an increase in taxonomic resolution, although this resolution
-will vary between taxonomic groups. One category may go from order to
-class to order, another from order to family.
+Zooplankton taxonomy can be confusing due to complex hierarchical
+classification, in which organisms are organised into groups or
+types. The maximum discernible taxonomic rank (from images or
+otherwise) does not infer ecological importance. For example, copepods
+account for approx. 70-80 % of the zooplankton and serve as food for
+fish larvae and many adult fish and important in the global carbon
+cycle. Identifying them to species label (sometimes impossible with
+imagery or even visually via microscope) is 'less important' than
+classifying all images to copepod. For this reason, we have divided
+the data into three idealised labels. Each label is an increase in
+taxonomic resolution, although this resolution will vary between
+taxonomic groups. One category may go from order to class to order,
+another from order to family.
 
 ## The challenge
 
-1. Build a classifier that can distinguish between copepods and non
-   copepods in images that do not include detritus.
+1. Build a classifier that can distinguish between copepods and
+   non-copepods in images that do not include detritus.
 
 2. Build a classifier that can distinguish amongst labelled plankton
    in images that do not include detritus.
