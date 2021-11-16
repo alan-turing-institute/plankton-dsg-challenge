@@ -7,8 +7,8 @@ Cefas (The Centre for Environment, Fisheries, and Aquaculture Science) is an age
 
 The RV Cefas Endeavour, a multi-disciplinary research vessel, collects millions of plankton images during its surveys through the Plankton Imager system: a high-speed imaging instrument which continuously pumps water, takes images of the passing particles, and attempts to identifies the zooplankton organisms present (Figure 1). Images have varying shapes and sizes with a highly-skewed distribution towards smaller particles/images. Of these, over 80% can be classified as detritus (e.g., sand, seaweed fragments, microplastics) which are traditionally removed by-eye before any analysis, leaving the remaining plankton images to be manually labelled.
 
-
-Figure 1. RV Cefas Endeavour Plankton Imager pipeline. Water flows through perpendicular to a line-scan camera (A). Scan lines are stitched (B) and regions of interest are extracted (C). Images are converted from RGB and stored on external storage (D). 
+![Figure 1. RV Cefas Endeavour Plankton Imager pipeline. Water flows through perpendicular to a line-scan camera (A). Scan lines are stitched (B) and regions of interest are extracted (C). Images are converted from RGB and stored on external storage (D).](./figs/fig1.png)
+**Figure 1** RV Cefas Endeavour Plankton Imager pipeline. Water flows through perpendicular to a line-scan camera (A). Scan lines are stitched (B) and regions of interest are extracted (C). Images are converted from RGB and stored on external storage (D). 
 
 ## The Challenge
 The challenge here is to develop rapid on-the-fly machine learning methods to automatically classify individual plankton species (using information on their shape, features and size) and also discern them from detritus. Off-the-shelf machine learning-based automated image classification methods usually require input images to be uniform in shape, while the images collected by the Plankton Imager vary in shape and size, presenting a challenge. 
