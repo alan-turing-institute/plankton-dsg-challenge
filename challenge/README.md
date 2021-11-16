@@ -35,9 +35,9 @@ Through developing automated tools for plankton classification the challenge par
 
 ## TODO
 
-Add detail on the classification tasks
-Assessment criteria
-Make sure the data section is consistent with the dataset and data dictionary/README
-Suggested approaches
-Suggest additional features for training (incl time, GPS coordinates)
-References
+- Add detail on the classification tasks
+- Assessment criteria
+- Make sure the data section is consistent with the dataset and data dictionary/README
+- Suggested approaches
+- Suggest additional features for training (incl time, GPS coordinates)
+- References
