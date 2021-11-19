@@ -29,8 +29,7 @@ imagery or even visually via microscope) is 'less important' than
 classifying all images to copepod. For this reason, we have divided
 the data into three idealised labels. Each label is an increase in
 taxonomic resolution, although this resolution will vary between
-taxonomic groups. One category may go from order to class to order,
-another from order to family.
+taxonomic groups.
 
 ## The challenge
 
