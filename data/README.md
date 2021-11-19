@@ -82,3 +82,6 @@ Celtic Sea as a case study. J. Plankton
 Research. https://doi.org/10.1093/plankt/fbab018.
 
 https://github.com/mbaityje/plankifier
+
+Schroeder SM, et al. (2018) Low Shot learning of plankton categories. In GCPR 2018.
+https://www.researchgate.net/profile/Simon-Martin-Schroeder/publication/331115929_Low-Shot_Learning_of_Plankton_Categories_40th_German_Conference_GCPR_2018_Stuttgart_Germany_October_9-12_2018_Proceedings/links/5f1180a592851c1eff184607/Low-Shot-Learning-of-Plankton-Categories-40th-German-Conference-GCPR-2018-Stuttgart-Germany-October-9-12-2018-Proceedings.pdf
