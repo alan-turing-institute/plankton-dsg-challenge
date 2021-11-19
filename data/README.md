@@ -16,6 +16,10 @@ include examples of detritus (sand, seaweed, particulates etc.)
 The dataset was assembled by Cefas for use by the Alan Turing
 Institute Data Study Group, December 2021.
 
+For more information, and to find the canonical version of this
+document, please see
+https://github.com/alan-turing-institute/plankton-dsg-challenge
+
 ## Ecological background
 
 Zooplankton taxonomy can be confusing due to complex hierarchical
