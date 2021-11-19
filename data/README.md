@@ -80,3 +80,5 @@ Scott J, et al.  (2021) In situ automated imaging, using the Plankton
 Imager, captures temporal variations in mesozooplankton using the
 Celtic Sea as a case study. J. Plankton
 Research. https://doi.org/10.1093/plankt/fbab018.
+
+https://github.com/mbaityje/plankifier
