@@ -1,0 +1,25 @@
+name: scivis-plankton
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.9
+  - intake
+  - hvplot
+  - pillow
+  - scikit-image
+  - exifread
+  - matplotlib
+  - numpy
+  - scipy
+  - scikit-learn
+  - pandas
+  - fsspec
+  - pyyaml
+  - requests
+  - aiohttp
+  - pip
+  - pip:
+    - git+https://github.com/alan-turing-institute/scivision@main
+    - azureml-core
+    - git+https://github.com/ots22/intake-xarray@feature/exif

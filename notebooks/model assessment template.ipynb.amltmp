@@ -1,0 +1,194 @@
+{
+  "cells": [
+    {
+      "cell_type": "code",
+      "source": [
+        "import pandas as pd\n",
+        "from sklearn.metrics import classification_report"
+      ],
+      "outputs": [],
+      "execution_count": 1,
+      "metadata": {},
+      "id": "f8b67513"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "UNKNOWN = pd.NA\n",
+        "OTHER = 'OTHER'"
+      ],
+      "outputs": [],
+      "execution_count": 2,
+      "metadata": {},
+      "id": "fdf58be7"
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "### Test set"
+      ],
+      "metadata": {},
+      "id": "1bdbfb8b"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "test_set = pd.DataFrame({\n",
+        "    'level1': ['Copepod',   'Copepod',   'Copepod',    'Copepod', 'Cladocera', 'Cladocera'],\n",
+        "    'level2': ['Calanoida', 'Calanoida', 'Cyclopoida', UNKNOWN,   UNKNOWN,     'Evadne'],\n",
+        "    'level3': ['Acartia',   'Calanus',   UNKNOWN,      UNKNOWN,   UNKNOWN,     UNKNOWN],\n",
+        "})\n",
+        "test_set"
+      ],
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "execution_count": 3,
+          "data": {
+            "text/html": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>level1</th>\n      <th>level2</th>\n      <th>level3</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>Copepod</td>\n      <td>Calanoida</td>\n      <td>Acartia</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>Copepod</td>\n      <td>Calanoida</td>\n      <td>Calanus</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>Copepod</td>\n      <td>Cyclopoida</td>\n      <td>&lt;NA&gt;</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>Copepod</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n    </tr>\n    <tr>\n      <th>4</th>\n      <td>Cladocera</td>\n      <td>&lt;NA&gt;</td>\n      <td>&lt;NA&gt;</td>\n    </tr>\n    <tr>\n      <th>5</th>\n      <td>Cladocera</td>\n      <td>Evadne</td>\n      <td>&lt;NA&gt;</td>\n    </tr>\n  </tbody>\n</table>\n</div>",
+            "text/plain": "      level1      level2   level3\n0    Copepod   Calanoida  Acartia\n1    Copepod   Calanoida  Calanus\n2    Copepod  Cyclopoida     <NA>\n3    Copepod        <NA>     <NA>\n4  Cladocera        <NA>     <NA>\n5  Cladocera      Evadne     <NA>"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 3,
+      "metadata": {},
+      "id": "49f8c4ac"
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "### Model output"
+      ],
+      "metadata": {},
+      "id": "e69bce09"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "prediction_model_1 = pd.DataFrame({\n",
+        "    'level1': ['Copepod',   'Copepod',    'Copepod',    'Copepod',    'Cladocera', 'Cladocera'],\n",
+        "    'level2': ['Calanoida', 'Cyclopoida', 'Cyclopoida', 'Cyclopoida', 'Evadne',    'Evadne'],\n",
+        "    'level3': ['Acartia',   OTHER,        'Oithona',    'Corycaeus',   OTHER,       OTHER],\n",
+        "})\n",
+        "prediction_model_1"
+      ],
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "execution_count": 4,
+          "data": {
+            "text/html": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>level1</th>\n      <th>level2</th>\n      <th>level3</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>Copepod</td>\n      <td>Calanoida</td>\n      <td>Acartia</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>Copepod</td>\n      <td>Cyclopoida</td>\n      <td>OTHER</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>Copepod</td>\n      <td>Cyclopoida</td>\n      <td>Oithona</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>Copepod</td>\n      <td>Cyclopoida</td>\n      <td>Corycaeus</td>\n    </tr>\n    <tr>\n      <th>4</th>\n      <td>Cladocera</td>\n      <td>Evadne</td>\n      <td>OTHER</td>\n    </tr>\n    <tr>\n      <th>5</th>\n      <td>Cladocera</td>\n      <td>Evadne</td>\n      <td>OTHER</td>\n    </tr>\n  </tbody>\n</table>\n</div>",
+            "text/plain": "      level1      level2     level3\n0    Copepod   Calanoida    Acartia\n1    Copepod  Cyclopoida      OTHER\n2    Copepod  Cyclopoida    Oithona\n3    Copepod  Cyclopoida  Corycaeus\n4  Cladocera      Evadne      OTHER\n5  Cladocera      Evadne      OTHER"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 4,
+      "metadata": {},
+      "id": "9163848d"
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "### Report"
+      ],
+      "metadata": {},
+      "id": "13857f92"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "def report(level):\n",
+        "    print(\n",
+        "        classification_report(\n",
+        "            test_set[level][~test_set[level].isna()], \n",
+        "            prediction_model_1[level][~test_set[level].isna()],\n",
+        "            zero_division=0\n",
+        "        )\n",
+        "    )"
+      ],
+      "outputs": [],
+      "execution_count": 5,
+      "metadata": {},
+      "id": "5d527374"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "report('level1')"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "              precision    recall  f1-score   support\n\n   Cladocera       1.00      1.00      1.00         2\n     Copepod       1.00      1.00      1.00         4\n\n    accuracy                           1.00         6\n   macro avg       1.00      1.00      1.00         6\nweighted avg       1.00      1.00      1.00         6\n\n"
+        }
+      ],
+      "execution_count": 6,
+      "metadata": {},
+      "id": "d9543abb"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Should use ('level1', 'level2')\n",
+        "report('level2')"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "              precision    recall  f1-score   support\n\n   Calanoida       1.00      0.50      0.67         2\n  Cyclopoida       0.50      1.00      0.67         1\n      Evadne       1.00      1.00      1.00         1\n\n    accuracy                           0.75         4\n   macro avg       0.83      0.83      0.78         4\nweighted avg       0.88      0.75      0.75         4\n\n"
+        }
+      ],
+      "execution_count": 7,
+      "metadata": {},
+      "id": "cfb1f2b3"
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Should use ('level1', 'level2', 'level3')\n",
+        "report('level3')"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "              precision    recall  f1-score   support\n\n     Acartia       1.00      1.00      1.00         1\n     Calanus       0.00      0.00      0.00         1\n       OTHER       0.00      0.00      0.00         0\n\n    accuracy                           0.50         2\n   macro avg       0.33      0.33      0.33         2\nweighted avg       0.50      0.50      0.50         2\n\n"
+        }
+      ],
+      "execution_count": 8,
+      "metadata": {},
+      "id": "d94484cc"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python",
+      "version": "3.6.9",
+      "mimetype": "text/x-python",
+      "codemirror_mode": {
+        "name": "ipython",
+        "version": 3
+      },
+      "pygments_lexer": "ipython3",
+      "nbconvert_exporter": "python",
+      "file_extension": ".py"
+    },
+    "kernel_info": {
+      "name": "python3"
+    },
+    "nteract": {
+      "version": "nteract-front-end@1.0.0"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
