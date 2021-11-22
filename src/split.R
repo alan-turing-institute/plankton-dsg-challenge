@@ -1,3 +1,5 @@
+#!/usr/bin/env Rscript
+
 library(tidyverse)
 
 ## Split index into stratified random train and test subsets, where
