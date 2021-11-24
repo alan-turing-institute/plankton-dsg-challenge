@@ -23,3 +23,10 @@ sources:
         storage_options: {'anon': True}
         coerce_shape: [832, 1040]
         exif_tags: True
+  index_file:
+      description: Contains the images index, filename, classification levels
+      origin: 
+      driver: csv
+      args:
+        urlpath: './data/index.csv'
+        
