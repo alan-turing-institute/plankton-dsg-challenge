@@ -21,5 +21,5 @@ sources:
         urlpath: './data/images/{filename}.tif'
         chunks: {}
         storage_options: {'anon': True}
-        coerce_shape: [256, 256]
+        coerce_shape: [832, 1040]
         exif_tags: True
