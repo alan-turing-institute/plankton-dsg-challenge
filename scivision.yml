@@ -1,0 +1,32 @@
+sources:
+  plankton_single:
+      description: Load a single labeled images from CEFAS zooplankton dataset
+      origin: 
+      driver: intake_xarray.image.ImageSource
+      parameters:
+        id:
+          description: which filename
+          type: str
+          default: Pia1.2017-10-03.1726+N00296780_hc
+      args:
+        urlpath: './data/images/{{id}}.tif'
+        storage_options: {'anon': True}
+        exif_tags: True
+
+  plankton_multiple:
+      description: Labeled images from CEFAS zooplankton dataset
+      origin: 
+      driver: intake_xarray.image.ImageSource
+      args:
+        urlpath: './data/images/{filename}.tif'
+        chunks: {}
+        storage_options: {'anon': True}
+        coerce_shape: [832, 1040]
+        exif_tags: True
+  index_file:
+      description: Contains the images index, filename, classification levels
+      origin: 
+      driver: csv
+      args:
+        urlpath: './data/index.csv'
+        
