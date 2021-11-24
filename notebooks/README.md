@@ -1,6 +1,9 @@
-To set up the environment for running the notebooks:
+### On ml.azure.com
 
-  1. `conda env create -f environment.yml`
-  2. `conda activate scivis-plankton`
+The environment has been set up using the following commands:
 
-Then run `jupyter notebook`
+1. `conda env create -f environment.yml`
+2. `conda activate scivis-plankton`
+3. `python -m ipykernel install --user --name scivis-plankton --display-name "Python (scivis-plankton)"`
+
+The third command makes `scivis-plankton` available as a notebook kernel.
