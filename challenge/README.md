@@ -28,8 +28,7 @@ For this challenge 5000 images of detritus will also be provided. These images a
 
 ![Figure 2. Left, Major and minor categories with their number and percentage of the total images. Right upper, class distribution of the observed categories. Right bottom, samples of other image types (non-relevant) of the plankton challenge dataset. The figure is only for illustrative purposes.](./figs/fig2.png)
 
-**Figure 2** Left, Major and minor categories with their number and percentage of the total images. Right upper, class distribution of the observed categories. Right bottom, samples of other image types (non-relevant) of the plankton challenge dataset. The figure is only for illustrative purposes.
-
+**Figure 2** Left, Major and minor categories with their number and percentage of the total images for the target classification `label 3`. Right upper, class distribution of the observed categories. Right bottom, samples of other image types (non-relevant) of the plankton challenge dataset. The figure is only for illustrative purposes, the detritus class was removed in the computation of class percentages.
 
 ## Goals
 - The main goal is to find an automated and rapid method that balances between classifying plankton at finer taxonomic resolution (i.e., not just identifying species but also sub-species) and accuracy.
