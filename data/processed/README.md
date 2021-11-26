@@ -1,5 +1,12 @@
 # Rapid identification of plankton using machine learning - Alan Turing Institute Data Study Group Challenge
 
+## Start here
+
+More information about this challenge is available
+[here](https://github.com/alan-turing-institute/plankton-dsg-challenge),
+including several Python Jupyter notebooks with some ideas for getting
+started.
+
 ## Introduction
 
 The Plankton Imager (PI) is a high speed imaging and analysis
