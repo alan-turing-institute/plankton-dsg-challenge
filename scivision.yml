@@ -9,6 +9,7 @@ sources:
           type: str
           default: Pia1.2017-10-03.1726+N00296780_hc
       args:
+        # Update with the correct path to the data in the Data Safe Haven
         urlpath: './data/images/{{id}}.tif'
         storage_options: {'anon': True}
         exif_tags: True
@@ -18,15 +19,36 @@ sources:
       origin: 
       driver: intake_xarray.image.ImageSource
       args:
+        # Update with the correct path to the data in the Data Safe Haven
         urlpath: './data/images/{filename}.tif'
         chunks: {}
         storage_options: {'anon': True}
         coerce_shape: [832, 1040]
         exif_tags: True
-  index_file:
-      description: Contains the images index, filename, classification levels
+
+  labels_raw:
+      description: >
+          Contains the classification labels for all images.
+          IMPORTANT NOTE: only use this data source if you intend to fetch the
+          labels for ALL of the images (both the test and training set)
       origin: 
       driver: csv
       args:
-        urlpath: './data/index.csv'
+        # Update with the correct path to the data in the Data Safe Haven
+        urlpath: './data/raw/index.csv'
         
+  labels:
+      description: Contains a subset of filenames to use as the primary working dataset for the challenge
+      origin:
+      driver: csv
+      args:
+        # Update with the correct path to the data in the Data Safe Haven
+        urlpath: './data/processed/train.csv'
+
+  labels_holdout:
+      description: Contains a subset of filenames to be used as the final holdout set, for model assessment
+      origin:
+      driver: csv
+      args:
+        # Update with the correct path to the data in the Data Safe Haven
+        urlpath: './data/processed/test.csv'
