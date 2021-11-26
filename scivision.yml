@@ -35,7 +35,7 @@ sources:
       driver: csv
       args:
         # Update with the correct path to the data in the Data Safe Haven
-        urlpath: './data/raw/index.csv'
+        urlpath: './data/index.csv'
         
   labels:
       description: Contains a subset of filenames to use as the primary working dataset for the challenge
@@ -43,7 +43,7 @@ sources:
       driver: csv
       args:
         # Update with the correct path to the data in the Data Safe Haven
-        urlpath: './data/processed/train.csv'
+        urlpath: './data/train.csv'
 
   labels_holdout:
       description: Contains a subset of filenames to be used as the final holdout set, for model assessment
@@ -51,4 +51,4 @@ sources:
       driver: csv
       args:
         # Update with the correct path to the data in the Data Safe Haven
-        urlpath: './data/processed/test.csv'
+        urlpath: './data/test.csv'
