@@ -20,7 +20,7 @@ sources:
       driver: intake_xarray.image.ImageSource
       args:
         # Update with the correct path to the data in the Data Safe Haven
-        urlpath: './data/images/{filename}.tif'
+        urlpath: './data/images/{filename}'
         chunks: {}
         storage_options: {'anon': True}
         coerce_shape: [832, 1040]
