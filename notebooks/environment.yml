@@ -23,3 +23,6 @@ dependencies:
     - git+https://github.com/alan-turing-institute/scivision@dsg-dec-2021
     - azureml-core
     - git+https://github.com/ots22/intake-xarray@feature/exif
+    - geopandas
+    - folium
+    - mapclassify
