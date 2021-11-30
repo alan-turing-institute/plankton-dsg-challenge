@@ -8,10 +8,10 @@ Create a Conda environment with the required Python version and packages:
 
 The third command makes `scivis-plankton` available as a notebook kernel.
 
-### pyenv/pip
+### pip
 
 Install the required Python version and packages:
 
-1. `pyenv install 3.9`
-1. `pyenv global 3.9`
+1. Make sure you are running Python `>=3.7`
+    - e.g. if using pyenv, you could run `pyenv global 3.9`
 2. `pip install -r requirements.txt`
