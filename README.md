@@ -6,7 +6,7 @@ Repository for the [Rapid identification of plankton using machine learning](htt
 
 - Challenge owner: Sophie Pitois (Cefas)
 - PIs: Alejandro Coca Castro, Beatriz Costa Gomes, Evangeline Corcoran (Turing)
-- Facilitators: TBD
+- Facilitators: Aida Mehonic, David Salvador
 
 People also with access to the data safe haven:
 - From the Turing: Ed Chalstrey, Oliver Strickson, Scott Hosking
