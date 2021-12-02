@@ -14,4 +14,5 @@ Install the required Python version and packages:
 
 1. Make sure you are running Python `>=3.7`
     - e.g. if using pyenv, you could run `pyenv global 3.9`
+    - or create a virtual environment lil: `pyenv virtualenv 3.7.4 myenv`
 2. `pip install -r requirements.txt`
