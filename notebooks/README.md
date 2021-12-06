@@ -13,6 +13,7 @@ The third command makes `scivis-plankton` available as a notebook kernel.
 Install the required Python version and packages:
 
 1. Make sure you are running Python `>=3.7`
-    - e.g. if using pyenv, you could run `pyenv global 3.9`
-    - or create a virtual environment lil: `pyenv virtualenv 3.7.4 myenv`
+    - run `pyenv global 3.8.8`
 2. `pip install -r requirements.txt`
+3. Set up a kernel for the jupyter notebook
+    - `python -m ipykernel install --user --name scivis-plankton --display-name "Python (scivis-plankton)"`
