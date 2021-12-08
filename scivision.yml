@@ -10,7 +10,7 @@ sources:
           default: Pia1.2017-10-03.1726+N00296780_hc
       args:
         # Update with the correct path to the data in the Data Safe Haven
-        urlpath: '/data/images/{{id}}.tif'
+        urlpath: '/scratch/data/images/{{id}}.tif'
         storage_options: {'anon': True}
         exif_tags: True
 
@@ -20,7 +20,7 @@ sources:
       driver: intake_xarray.image.ImageSource
       args:
         # Update with the correct path to the data in the Data Safe Haven
-        urlpath: '/data/images/{filename}'
+        urlpath: '/scratch/data/images/{filename}'
         chunks: {}
         storage_options: {'anon': True}
         coerce_shape: [832, 1040]
@@ -35,7 +35,7 @@ sources:
       driver: csv
       args:
         # Update with the correct path to the data in the Data Safe Haven
-        urlpath: '/data/index.csv'
+        urlpath: '/scratch/data/index.csv'
         
   labels:
       description: Contains a subset of filenames to use as the primary working dataset for the challenge
@@ -43,7 +43,7 @@ sources:
       driver: csv
       args:
         # Update with the correct path to the data in the Data Safe Haven
-        urlpath: '/data/train.csv'
+        urlpath: '/scratch/data/train.csv'
 
   labels_holdout:
       description: Contains a subset of filenames to be used as the final holdout set, for model assessment
@@ -51,4 +51,4 @@ sources:
       driver: csv
       args:
         # Update with the correct path to the data in the Data Safe Haven
-        urlpath: '/data/test.csv'
+        urlpath: '/scratch/data/test.csv'
