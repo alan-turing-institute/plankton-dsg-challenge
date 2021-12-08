@@ -1,6 +1,6 @@
 # EXIF data extraction
 
-Each image contains metadata including GPS location where known.
+Each image contains metadata including GPS location where known extracted from the original image.
 
 These data can be extracted to CSV using the following script.
 
