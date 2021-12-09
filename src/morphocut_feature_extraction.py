@@ -6,7 +6,7 @@ from morphocut import Call, Pipeline
 from morphocut.contrib.ecotaxa import EcotaxaWriter
 from morphocut.contrib.zooprocess import CalculateZooProcessFeatures
 from morphocut.file import Glob
-from morphocut.image import FindRegions, ImageReader
+from morphocut.image import FindRegions, ImageReader, RGB2Gray
 from morphocut.parallel import ParallelPipeline
 from morphocut.str import Format
 from morphocut.stream import Enumerate, Unpack
@@ -15,14 +15,14 @@ from morphocut.stream import Enumerate, Unpack
 # that should be carried out on the objects of the stream.
 with Pipeline() as p:
     # Corresponds to `for base_path in ["/path/a", "/path/b", "/path/c"]:`
-    base_path = "/shared/davidsalvador/data"
+    base_path = "/scratch/data"
 
     # Number the objects in the stream
     running_number = Enumerate()
 
     # Call calls regular Python functions.
     # Here, a subpath is appended to base_path.
-    pattern = Call(os.path.join, base_path, "images_gray/*.tif")
+    pattern = Call(os.path.join, base_path, "images/*.tif")
 
     # Corresponds to `for path in glob(pattern):`
     path = Glob(pattern)
@@ -36,6 +36,9 @@ with Pipeline() as p:
 
         # Read the image
         image = ImageReader(path)
+
+        # Convert to grey
+        image = RGB2Gray(image)
 
         # Do some thresholding
         mask = image < 128
@@ -52,7 +55,7 @@ with Pipeline() as p:
         # Calculate a filename for the ROI image:
         # "RUNNING_NUMBER-SOURCE_BASENAME-ROI_LABEL"
         roi_name = Format(
-            "{:d}-{}-{:d}.jpg", running_number, source_basename, roi_label
+            "{:d}-{}-{:d}.tif", running_number, source_basename, roi_label
         )
 
         meta = CalculateZooProcessFeatures(region, prefix="object_")
