@@ -5,12 +5,35 @@
 library(tidyverse)
 
 df <- read_csv("../data/raw/index.csv")
+count(df)
+
+## Find duplicates
 
 dups <- df$filename[duplicated(df$filename)]
-
 df2 <- filter(df, df$filename %in% dups)
+count(df2)
 
-df2 <- arrange(df2, filename)
+## Clean up and export a list of duplicates
 
-df2 <- select(df2,-index)
-write_csv(df2, "dups.csv")
+df3 <- arrange(df2, filename)
+
+df3 <- select(df3,-index)
+write_csv(df3, "dups.csv")
+
+## Remove the duplicates
+
+df4 <- filter(df, !df$filename %in% dups)
+count(df4)
+
+## Check lengths
+
+count(df) - count(df2) == count(df4)
+
+## Remove augmented images (these have suffixes such as _fx.tif,
+## _fy.tif and _fxy.tif
+
+df5 <-filter(df4, endsWith(df4$filename, "hc.tif"))
+
+count(df5)
+
+write_csv(df5, "../data/processed/index-clean.csv")
