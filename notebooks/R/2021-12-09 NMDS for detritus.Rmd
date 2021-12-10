@@ -1,0 +1,132 @@
+---
+  title: "2021-12-09 NMDS for detritus"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+  
+# Background
+Most of the images collected by the Plankton Imager are of detritus. Detritus is difficult to categorise by humans,
+and in this dataset, no further classification had been carried out for detritus.
+We will hence explore whether we can use clustering to find groups of detritus that are similar,
+and which could be used environmental mapping.
+
+# Data
+
+```{r load_data}
+  dat <- read.table("/scratch/ecotaxa_export-david.tsv", comment.char = "[", header = T)
+  
+  # ---- add label1 ----
+  
+  # read index file
+  index_all <- read.csv("/scratch/data/index.csv", header = TRUE)
+
+  # tidy file name
+  dat$filename1 <- sub("0-", "", dat$img_file_name)
+  dat$filename <-  sub("-[0-9].tif", ".tif", dat$filename1)
+
+  # check that matching is complete
+  table(dat$filename %in% index_all$filename)
+  
+  # add label1
+  dat$label1 <- index_all$label1[match(dat$filename, index_all$filename)]
+  
+  # only keep detritus
+  detr <- dat[dat$label1 %in% "detritus",]
+  
+  # extract data for NMDS (only numerical data allowed)
+  detr_mat <- detr[, -which(names(detr) %in% c("object_label", "img_file_name", "img_rank", "filename1", "filename", "label1"))]
+
+    # rename columns gor easier readability
+  NAMES       <- names(detr_mat)
+  NAMES_SHORT <- sub("object_", "", names(detr_mat))
+  colnames(detr_mat) <- NAMES_SHORT
+  
+  # columns with constant value
+  CONST <- c("euler_number", "extent", "solidity", ".area", "bx", "by")
+  detr_mat <- detr_mat[, -(which(names(detr_mat) %in% CONST))]
+```
+
+## NMDS
+
+```{r nmds}
+  library(vegan)
+  
+  # take subset
+  mat <- detr_mat[seq(1, 40000, by = 20), ]
+
+  # calculate dissimilarities (on 1:10)
+  detr_mds <- metaMDS(mat, k = 2, try = 1, trymax = 1)
+
+    # stress < 0.2 is good.
+  
+  # check
+  detr_mds
+  
+  # plot coordination
+  plot(detr_mds, type = 'n')
+  points(detr_mds, display = "site")
+  
+  plot(detr_mds, type = 'n')
+  text(detr_mds, display = "species", col = 3, cex = 0.8)
+```
+
+```{r clustering}
+  library(factoextra)
+
+  # make distance matrix (same transformation as for metaMDS)
+  dist <- vegdist(wisconsin(sqrt(mat)))
+  
+```
+
+```{r bb_code}
+  mat_scaled <- wisconsin(sqrt(mat))
+  
+  par(mfrow=c(2,3))
+  for(i in 1:26) hist(mat_scaled[, i], main = i)
+  summary(mat_scaled)
+
+  # initial look for clusters (hierarchical)
+  library(factoextra)
+  hc_cut <- hcut(mat_scaled, k = 6, hc_method = "average")
+  
+  fviz_cluster(hc_cut)
+  fviz_cluster(hc_cut, axes = c(1, 3))
+  fviz_cluster(hc_cut, axes = c(2, 3))
+  
+  library(rgl)
+  res_pca <- FactoMineR::PCA(mat_scaled)
+  
+  # visualize eigenvalues/variances
+  library(factoextra)
+  fviz_screeplot(res_pca, addlabels = TRUE)
+  
+  # extrac the results for variables
+  #var <- get_pca_var(res_pca)
+  
+  # contributions of varoables to PC1
+  fviz_contrib(res_pca, choice = "var", axes = 1)
+  fviz_contrib(res_pca, choice = "var", axes = 2)
+  fviz_contrib(res_pca, choice = "var", axes = 3)
+
+  
+  # plot individuals
+  fviz_pca_ind(res_pca)
+  
+  # elbow method
+  fviz_nbclust(mat_scaled, kmeans, method = "wss", k.max = 12)
+
+  # k_means
+  k_mat <- kmeans(mat_scaled, 5)
+  fviz_cluster(k_mat, mat_scaled)
+  fviz_cluster(k_mat, mat_scaled, axes = c(2, 3))
+  fviz_cluster(k_mat, mat_scaled, axes = c(1, 3))
+
+  library(dplyr)
+  View(as.data.frame(mat) %>% mutate(Cluster = k_mat$cluster) %>% group_by(Cluster) %>% summarize_all("mean"))
+    
+  plot3d(res_pca$ind$coord[, 1:3], col = scales::hue_pal()(4)[k_mat$cluster], type = 's')
+  
+
+
+```

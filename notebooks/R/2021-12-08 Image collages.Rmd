@@ -1,0 +1,162 @@
+---
+title: "2021-12-08 Img collages"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Background
+It would be great to see a few example images from each label3 class to get a feeling of class diversity. The idea is to make an image collage for each class comprised of the four largest and smallest images in each class.
+
+# Access image file info
+I have a list of the image info and the taxonomic labels. list I want to add the file size of each image to this list. To retrieve file size info, I will make a list of the files in the data folder.
+
+Note, there are some duplicates (from an earlier augmentation effort) in the folder. I will remove those for this analysis.
+
+  - index_all: all images
+  - index: unique images (no duplicates)
+
+```{r read_file_info}
+  # read index file
+  index_all <- read.csv("/scratch/data/index.csv", header = TRUE)
+  
+  # retrieve file info
+  objs <- file.info(list.files("/scratch/data/images/", full.names = TRUE))
+  head(objs)
+  
+  # clean file names
+  objs$filename_long  <- rownames(objs)
+  objs$filename       <- sub("/scratch/data/images//", "", objs$filename_long)
+  
+  # add image size to index file
+  index_all$size <- objs$size[match(index_all$filename, objs$filename)]
+```
+
+So, I noticed that some images have duplicate names distinguished by unique suffixes. After inspection, it appears that 574 images have been already augmented by simple rotation. I will exclude these.
+
+```{r top-bot-5}
+  # plot image
+  library(bioimagetools)
+
+  # plot example of duplicate images
+  par(pty = "s", mfrow = c(2,2), mar = c(0,0,0,0))
+   for(i in grep("Pia1\\.2017\\-10\\-03\\.1726\\+N00359755", index_all$filename)) {
+    IMG_NAME <- paste("/scratch/data/images/", index_all$filename[i], sep="")
+    img      <- readTIF(IMG_NAME)
+  
+    img(img, z = 1, col = "rgb")
+   }
+  par(pty = "m")
+
+  # number of rotated images
+  table(grepl("fxy\\.tif", index_all$filename))
+  table(grepl("fx\\.tif",  index_all$filename))
+  table(grepl("fy\\.tif",  index_all$filename))
+  
+  # exclude duplicate images
+  index <- index_all[!(grepl("fxy\\.tif", index_all$filename)| 
+                       grepl("fx\\.tif", index_all$filename) |
+                       grepl("fy\\.tif", index_all$filename) ), ]
+```
+
+Extract largest and smallest 5 images of each group.
+
+I then make a collage for each type and save these. To each collage, I add a scalebar, which I made in Adobe Illustrator. I also add the name of the label3 class and the number of images within the class.
+
+Note, there are 39 groups in label3.
+
+```{r top5}
+  library(dplyr)
+
+  # sort all images according to size, group by label3 and only take top 5 each.
+  largest_5 <- index %>%
+    arrange(desc(size)) %>%
+    group_by(label3) %>% slice(1:5)
+  
+  smallest_5 <- index %>%
+    arrange(size) %>%
+    group_by(label3) %>% slice(1:5)
+    
+  # extract images
+  library(magick)
+
+  # read scale bar image
+  img_scalebar <- image_read("/home/sari.giering/git/plankton-dsg-challenge/data/collages/scalebar_100px.tif")[1]
+  
+  for(TYPE in levels(index$label3)) {
+    
+    # number of objects for TYPE
+    n <- length(index$label3[index$label3 %in% TYPE])
+    
+    # load 4 largest and smallest images
+    for(i in 1:4) {
+      IMG_NAME <- paste("/scratch/data/images/", largest_5[largest_5$label3 %in% TYPE, ]$filename[i], sep="")
+      img      <- image_read(IMG_NAME)
+      assign(paste("img_L", i, sep="_"), img)
+
+      IMG_NAME <- paste("/scratch/data/images/", smallest_5[smallest_5$label3 %in% TYPE, ]$filename[i], sep="")
+      img      <- image_read(IMG_NAME)
+      assign(paste("img_S", i, sep="_"), img)
+    }
+    
+    # collate images
+    col_L   <- image_append(c(img_L_1, img_L_2, img_L_3, img_L_4))
+    col_S   <- image_append(c(img_S_1, img_S_2, img_S_3, img_S_4, img_scalebar))
+    col_all <- image_append(c(col_L, col_S), stack = TRUE)
+    
+    # add annotation
+    ANNOT <- paste(TYPE, " (n = ", n, ")", sep="")
+    col_annotated <- image_annotate(col_all, ANNOT, size = 20, gravity = "northwest")
+    
+    # make filename
+    FILENAME <- paste("/home/sari.giering/git/plankton-dsg-challenge/data/collages/collage_", TYPE,  "_n", n, ".png", sep = "")
+    
+    #image_write(col_annotated, path = FILENAME, format = "png")
+  }
+   
+```
+
+# Class imbalances
+
+I use this opportunity to illustrate the class imbalances. To add a bit more information to the plot, I also include information on the median file size, which is a proxy for object size.
+
+The resulting plot nicely illustrates the variability in class size and class divesity of label3 images.
+
+```{r show_class_imbalance}
+  classes <- aggregate(index$filename, by = list("label1" = index$label1,
+                                      "label2" = index$label2,
+                                      "label3" = index$label3), length)
+
+  classes$median_size <- aggregate(index$size, by = list("label1" = index$label1,
+                                      "label2" = index$label2,
+                                      "label3" = index$label3), median)$x
+
+  classes$size_q1 <- aggregate(index$size, by = list("label1" = index$label1,
+                                      "label2" = index$label2,
+                                      "label3" = index$label3), quantile, probs = 0.25)$x
+  
+  classes$size_q3 <- aggregate(index$size, by = list("label1" = index$label1,
+                                      "label2" = index$label2,
+                                      "label3" = index$label3), quantile, probs = 0.75)$x
+  
+  library(ggplot2)
+  ggplot(classes, aes(x = x, y = median_size/1000, color = label2)) +
+      geom_point() +
+      geom_errorbar(aes(ymin = size_q1/1000, ymax = size_q3/1000), width = 0.2) +
+      scale_x_continuous(trans = 'log10') +
+      theme_classic() + theme(legend.position=c(0.85, 0.75)) +
+      ylab("Median file size (KB)") +
+      xlab("Number of images in class") + ggtitle("Classes according to label3")
+  
+  classes[rev(order(classes$x)),]
+  
+  write.csv(classes[rev(order(classes$x)),], "out.csv", row.names = FALSE)
+
+```
+
+
+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
