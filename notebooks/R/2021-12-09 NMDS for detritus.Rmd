@@ -1,25 +1,51 @@
 ---
-  title: "2021-12-09 NMDS for detritus"
-output: html_document
+title: "NMDS for detritus"
+author: "Sari Giering (10 Dec 2021)"
+output:
+  html_document: 
+    keep_md: no
+  pdf_document: default
+  word_document: default
 editor_options: 
   chunk_output_type: console
 ---
-  
+
+### File version history
+
 # Background
-Most of the images collected by the Plankton Imager are of detritus. Detritus is difficult to categorise by humans,
+Most of the images collected by the Plankton Imager are of detritus.
+Detritus is difficult to categorise by humans,
 and in this dataset, no further classification had been carried out for detritus.
 We will hence explore whether we can use clustering to find groups of detritus that are similar,
 and which could be used environmental mapping.
 
+I originally wanted to use NMDS here - similar to what I did with the zooplankton data.
+However, NMDS is computationally too slow for the large 'long' dataset we have (40,000 rows).
+I therefore suggest that we use a PCA. I am not as familiar with the math behind the PCA,
+but it should be OK for our purposes for now.
+
+Here a link to a nice summary of ordination methods: 
+https://ourcodingclub.github.io/tutorials/ordination/
+
+
+
 # Data
+I load the low-level data from ecotaxa here.
 
 ```{r load_data}
-  dat <- read.table("/scratch/ecotaxa_export-david.tsv", comment.char = "[", header = T)
-  
+  # define project root
+  library(here)
+  i_am("notebooks/R/2021-12-09 NMDS for detritus.Rmd")
+
+  # load low-level features
+  dat <- read.table(here("data", "processed", "low_features", "ecotaxa_export-david.tsv"), comment.char = "[", header = T)
+```
+   
+```{r label1} 
   # ---- add label1 ----
   
   # read index file
-  index_all <- read.csv("/scratch/data/index.csv", header = TRUE)
+  index_all <- read.csv(here("data", "raw", "index.csv"), header = TRUE)
 
   # tidy file name
   dat$filename1 <- sub("0-", "", dat$img_file_name)
@@ -37,14 +63,13 @@ and which could be used environmental mapping.
   # extract data for NMDS (only numerical data allowed)
   detr_mat <- detr[, -which(names(detr) %in% c("object_label", "img_file_name", "img_rank", "filename1", "filename", "label1"))]
 
-    # rename columns gor easier readability
+  # rename columns for easier readability
   NAMES       <- names(detr_mat)
   NAMES_SHORT <- sub("object_", "", names(detr_mat))
   colnames(detr_mat) <- NAMES_SHORT
   
-  # columns with constant value
-  CONST <- c("euler_number", "extent", "solidity", ".area", "bx", "by")
-  detr_mat <- detr_mat[, -(which(names(detr_mat) %in% CONST))]
+  # remove columns with constant value (i.e 0 variance)
+  detr_mat <- detr_mat[, apply(detr_mat, 2, var, na.rm=TRUE) != 0]
 ```
 
 ## NMDS

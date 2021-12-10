@@ -69,6 +69,8 @@ I then make a collage for each type and save these. To each collage, I add a sca
 
 Note, there are 39 groups in label3.
 
+I commented out the image saving command here. Please enable if you want to regenerate the images.
+
 ```{r top5}
   library(dplyr)
 
@@ -115,6 +117,7 @@ Note, there are 39 groups in label3.
     # make filename
     FILENAME <- paste("/home/sari.giering/git/plankton-dsg-challenge/data/collages/collage_", TYPE,  "_n", n, ".png", sep = "")
     
+    # ---- SAVE IMAGES ----
     #image_write(col_annotated, path = FILENAME, format = "png")
   }
    
@@ -125,6 +128,8 @@ Note, there are 39 groups in label3.
 I use this opportunity to illustrate the class imbalances. To add a bit more information to the plot, I also include information on the median file size, which is a proxy for object size.
 
 The resulting plot nicely illustrates the variability in class size and class divesity of label3 images.
+
+I commented out the table saving command here. Please enable if you want to regenerate the images.
 
 ```{r show_class_imbalance}
   classes <- aggregate(index$filename, by = list("label1" = index$label1,
@@ -154,9 +159,6 @@ The resulting plot nicely illustrates the variability in class size and class di
   
   classes[rev(order(classes$x)),]
   
-  write.csv(classes[rev(order(classes$x)),], "out.csv", row.names = FALSE)
-
+  # ---- SAVE TABLE ----
+  #write.csv(classes[rev(order(classes$x)),], "out.csv", row.names = FALSE)
 ```
-
-
-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
