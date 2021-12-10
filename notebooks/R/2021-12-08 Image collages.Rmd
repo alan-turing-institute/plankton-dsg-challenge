@@ -26,7 +26,7 @@ Note, there are some duplicates (from an earlier augmentation effort) in the fol
   
   # retrieve file info
   objs <- file.info(list.files("/scratch/data/images/", full.names = TRUE))
-  head(objs)
+  knitr::kable(head(objs))
   
   # clean file names
   objs$filename_long  <- rownames(objs)
@@ -127,9 +127,10 @@ I commented out the image saving command here. Please enable if you want to rege
 
 I use this opportunity to illustrate the class imbalances. To add a bit more information to the plot, I also include information on the median file size, which is a proxy for object size.
 
-The resulting plot nicely illustrates the variability in class size and class divesity of label3 images.
+The resulting plot nicely illustrates the variability in class size and class diversity of label3 images. Error bars show Q1 and Q3 (25% and 75% of data).
 
-I commented out the table saving command here. Please enable if you want to regenerate the images.
+I commented out the table saving command here. Please enable if you want to save the table.
+
 
 ```{r show_class_imbalance}
   classes <- aggregate(index$filename, by = list("label1" = index$label1,
@@ -157,7 +158,7 @@ I commented out the table saving command here. Please enable if you want to rege
       ylab("Median file size (KB)") +
       xlab("Number of images in class") + ggtitle("Classes according to label3")
   
-  classes[rev(order(classes$x)),]
+  knitr::kable(classes[rev(order(classes$x)),])
   
   # ---- SAVE TABLE ----
   #write.csv(classes[rev(order(classes$x)),], "out.csv", row.names = FALSE)
