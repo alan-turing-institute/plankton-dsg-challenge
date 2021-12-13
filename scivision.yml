@@ -43,7 +43,7 @@ sources:
       driver: csv
       args:
         # Update with the correct path to the data in the Data Safe Haven
-        urlpath: '/scratch/data/train.csv'
+        urlpath: '/output/data/partition/train.csv'
 
   labels_holdout:
       description: Contains a subset of filenames to be used as the final holdout set, for model assessment
@@ -51,4 +51,4 @@ sources:
       driver: csv
       args:
         # Update with the correct path to the data in the Data Safe Haven
-        urlpath: '/scratch/data/test.csv'
+        urlpath: '/output/data/partition/test.csv'
