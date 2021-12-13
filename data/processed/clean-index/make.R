@@ -1,10 +1,12 @@
 #!/usr/bin/env Rscript
 
-## Explore a problem with some duplicates in the index.
+## We found a problem with duplicates in the index.csv file. This
+## script removes the duplicates. It also removes augmented images.
+## It writes a new file called clean-index.csv.
 
 library(tidyverse)
 
-df <- read_csv("../data/raw/index.csv")
+df <- read_csv("../../raw/index.csv")
 count(df)
 
 ## Find duplicates
@@ -36,4 +38,4 @@ df5 <-filter(df4, endsWith(df4$filename, "hc.tif"))
 
 count(df5)
 
-write_csv(df5, "../data/processed/index-clean.csv")
+write_csv(df5, "index-clean.csv")
