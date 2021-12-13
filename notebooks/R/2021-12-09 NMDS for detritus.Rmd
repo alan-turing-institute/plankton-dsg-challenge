@@ -83,7 +83,7 @@ in the 'data' folder that were duplicates. I will remove those lines.
 Because the dataset is so large, I will only use a subsample for now.
 
 ```{r subsample}
-  INDEX <- seq(1, nrow(detr_mat), by = 20)
+  INDEX <- seq(1, nrow(detr_mat), by = 10)
   
   # all data
   detr_sub <- detr[INDEX, ]
@@ -216,7 +216,7 @@ The Elbow Curve method is (sometimes) helpful because it shows how increasing th
 ## NbClust
 The NbClust package provides 30 indices for determining the relevant number of clusters and proposes to users the best clustering scheme from the different results obtained by varying all combinations of number of clusters, distance measures, and clustering methods.
 
-```{r nbclust}
+```{r nbclust, eval = FALSE, echo = FALSE}
   res_nbclust <- NbClust::NbClust(mat_scaled,
       distance = "euclidean",
       min.nc = 3, max.nc = 7, 
@@ -270,12 +270,12 @@ Now I will extract some collages.
     # load images
     img_sample <- vector()
     for(i in 1:length(INDEX)) {
-      img_name    <- paste("/scratch/data/images/", detr_sub$filename[i], sep="")
+      img_name    <- paste("/scratch/data/images/", detr_sub$filename[detr_sub$cluster %in% TYPE][i], sep="")
       img_sample  <- c(img_sample, img_name)
     }
     
     # add scale bar (might be added twice as there are two files with that name...)
-    img_sample <- c(img_sample, here("data", "collages", "scalebar_100px.tif"))
+    img_sample <- c(img_sample, here("data", "collages", "scalebar_100px.tif")[1])
     
     # collate images
     collage <- image_read(img_sample) %>%
