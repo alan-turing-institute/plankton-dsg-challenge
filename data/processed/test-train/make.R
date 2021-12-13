@@ -6,7 +6,7 @@ library(tidyverse)
 ## the size of the test subset is approximately one tenth of the whole
 ## data set.
 
-index <- read_csv("../data/raw/index.csv")
+index <- read_csv("../clean-index/index-clean.csv")
 
 set.seed(1)
 
@@ -34,5 +34,5 @@ stopifnot(length(unique(test$label3)) == length(unique(train$label3)))
 
 ## Output
 
-write_csv(test,"../data/processed/test.csv")
-write_csv(train,"../data/processed/train.csv")
+write_csv(test,"test.csv")
+write_csv(train,"train.csv")
