@@ -1,0 +1,290 @@
+---
+title: "Cluster for detritus (CNN)"
+author: "Sari Giering (15 Dec 2021)"
+output:
+  html_document: 
+    keep_md: no
+  pdf_document: default
+  word_document: default
+editor_options: 
+  chunk_output_type: console
+---
+
+### File version history
+2021-12-15 Renamed from '2021-12-09 NMDS'. Now mentions clusters.  
+
+# Background
+Most of the images collected by the Plankton Imager are of detritus.
+Detritus is difficult to categorise by humans,
+and in this dataset, no further classification had been carried out for detritus.
+We will hence explore whether we can use clustering to find groups of detritus that are similar,
+and which could be used environmental mapping.
+
+I originally wanted to use NMDS here - similar to what I did with the zooplankton data.
+However, NMDS is computationally too slow for the large 'long' dataset we have (40,000 rows).
+I therefore suggest that we use a PCA. I am not as familiar with the math behind the PCA,
+but it should be OK for our purposes for now.
+
+Here a link to a nice summary of ordination methods: 
+https://ourcodingclub.github.io/tutorials/ordination/
+
+# Data
+
+- load the low-level data from ecotaxa here.
+- load the index file of all images and their labels.
+
+Unfortunately, we did not have time to extract the CNN features in a format that can be used to extract the corresponding images.
+
+There might be a discrepancy between the two tables as we detected a few images
+in the 'data' folder that were duplicates. I will remove those lines.
+
+
+```{r load_data}
+  # define project root
+  library(here)
+  i_am("notebooks/R/2021-12-15-Cluster-for-detritus_CNN.Rmd")
+
+  # load low-level features
+  dat <- read.table(here("data", "processed", "morphocut", "ecotaxa_export.tsv"), comment.char = "[", header = T)
+
+  # ---- add label1 ----
+  # read index file
+  index_all <- read.csv(here("data", "processed", "clean-index", "index-clean.csv"), header = TRUE)
+
+  # tidy file name
+  dat$filename1 <- sub("0-", "", dat$img_file_name)
+  dat$filename <-  sub("-[0-9].tif", ".tif", dat$filename1)
+
+  # check that matching is complete (discrepany may be caused by duplicate images that have subsequently been removed.)
+  table(dat$filename %in% index_all$filename)
+  
+  # remove outdated lines
+  dat        <- dat[which(dat$filename %in% index_all$filename), ]
+
+  # add label1
+  dat$label1 <- index_all$label1[match(dat$filename, index_all$filename)]
+  
+  # only keep detritus
+  detr <- dat[dat$label1 %in% "detritus",]
+  
+  # remove columns containing non-numerical data
+  detr_mat <- detr[, sapply(detr, class) %in% c("numeric", "integer")]
+
+  # remove other unwanted columns (i.e. object_label and img_rank)
+  detr_mat <- detr_mat[, -which(names(detr_mat) %in% c("object_label", "img_rank"))]
+
+  # remove columns with constant value (i.e 0 variance)
+  detr_mat <- detr_mat[, apply(detr_mat, 2, var, na.rm=TRUE) != 0]
+
+  # rename columns for easier readability
+  NAMES       <- names(detr_mat)
+  NAMES_SHORT <- sub("object_", "", names(detr_mat))
+  colnames(detr_mat) <- NAMES_SHORT
+```
+
+## Subsample
+Because the dataset is so large, I will only use a subsample for now.
+
+```{r subsample}
+  INDEX <- seq(1, nrow(detr_mat), by = 10)
+  
+  # all data
+  detr_sub <- detr[INDEX, ]
+  
+  # numerical values
+  mat      <- detr_mat[INDEX, ]
+```
+
+
+# PCA & PCoA
+
+PCoA basically reduces many dimensions into two dimensions, so that
+we can then perform a cluster analysis. It is the metric version of the NMDS.
+We also require to calculate a distance matrix for a PCoA, which 
+results in memory issues.
+
+This entry addesses this problem and is incredibly useful: [link](https://stackoverflow.com/questions/16539850/errors-with-pcoa-in-r-due-to-large-dataset?rq=1).
+However, it requires euclidean distance calculations, which in turn requires metric data.
+
+To check whether we can use euclidean space, I will scale the data and
+check whether it is metric.
+
+See also this entry about transformation: [link](https://cran.r-project.org/web/packages/ecotraj/vignettes/Transformation.html).
+
+```{r metric_check}}
+  par(mfrow=c(3, 3))
+  for(i in 1:ncol(mat)) {
+    hist(mat[, i], main = colnames(mat)[i])
+    hist(log(mat[, i]),  main = paste("log of",  colnames(mat)[i]))
+    hist(sqrt(mat[, i]), main = paste("sqrt of", colnames(mat)[i]))
+  }
+```
+So, most of our data is not normally distributed.
+Distributions are pretty varied (with many variables being left-skewed),
+so I cannot apply a 'blanket log transform'.
+
+I found a cool packages that calculates skewness: "skewness".
+
+If the skewness value or sample skewness of your data frame or data set is negative, you have a left skewed distribution. In descriptive statistics, a negative skewness means you have too much of your data in the lower values, and something with your dependent variable makes the skewness value negative because there is a correlation towards the lower values of the distribution.
+
+```{r skewness_check}
+  #install.packages("moments")
+  library(moments) # package to test skewness
+
+  par(mfrow=c(2, 3))
+  for(i in 1:6) {
+    skew <- round(skewness(mat[, i]), 2)
+    hist(mat[, i], main = paste(colnames(mat)[i], "\n", 
+                                "Skew: ", skew, sep = ""))
+  }
+```
+
+Anyway, using the sqrt transformation seems to improve all parameters,
+and it can also be used when the data includes 0. So, I will use sqrt()
+as a blanket transformation.
+
+All data needs to be scaled as the scale is critical for the PCA.
+A good example is the unit of measurement. 
+For a size measurement, it does not matter to us humans whether
+we measure in mm (e.g. 100-1000 mm) or meters (e.g. 0.1-1 m).
+For the PCA calculation, however, it matters a lot.
+We therefore scale so that the mean is 0 and the SD is 1.
+This way, all variables - regardless of unit - can be compared.
+What matters is where the object sits within the parameter scale
+(for example, towards the "left" or the "right" of the other data points).
+
+# PCA
+I tried calculating the PCoA 'by hand' following this [code](https://stackoverflow.com/questions/16539850/errors-with-pcoa-in-r-due-to-large-dataset?rq=1).
+However, the results look different to the FactoMineR pca, which is frustrating
+as the latter look very promising for clustering.
+
+So, with that in mind, I am simply progressing using the FactoMineR pca.
+
+```{r pca}
+  library(ggplot2) # plotting (not necessary, but nice)
+  library(FactoMineR) # exploratory mutlivariate methods
+
+  # scale and transform data
+  mat_scaled <- scale(mat)
+
+  # calculate PCA
+  pca <- PCA(mat_scaled, graph = FALSE)
+```
+
+## Exploration
+
+```{r pca_exploration_variance}
+  library(factoextra) # extract and Visualize the results of multivariate data analyses 
+
+  # show predictive power of the dimensions.
+  fviz_screeplot(pca)
+```
+
+The first two dimensions capture around 75% of the variance.
+
+```{r pca_exploration_explaning_variables}
+  # Contributions of variables to PC1
+  fviz_contrib(pca, choice = "var", axes = 1, top = 15)
+
+  # Contributions of variables to PC2
+  fviz_contrib(pca, choice = "var", axes = 2, top = 10)
+
+  # Control variable colors using their contributions to the principle axis
+  fviz_pca_var(pca, col.var = "contrib",
+               gradient.cols = viridis::viridis(10),
+               repel = TRUE # Avoid text overlapping
+               ) + theme_minimal() + ggtitle("Variables - PCA")
+```
+
+Clearly, a lot of variables come into play when looking at the first dimension.
+The second dimension is dominated b width, x and local_centroid.
+The circular plot also suggests that the grey levels contribute to the 2nd dimension.
+
+# Determine optimal number of clusters
+
+## The “Elbow” Method
+Probably the most well known method, the elbow method, in which the sum of squares at each number of clusters is calculated and graphed, and the user looks for a change of slope from steep to shallow (an elbow) to determine the optimal number of clusters. This method is inexact, but still potentially helpful.
+
+```{r elbow}
+  set.seed(31)
+  
+  # function to compute total within-cluster sum of squares
+  fviz_nbclust(mat_scaled, kmeans, method = "wss", k.max = 15) + theme_minimal() + ggtitle("kmeans CORE: the Elbow Method")
+```
+
+7 clusters look good to me.
+
+The Elbow Curve method is (sometimes) helpful because it shows how increasing the number of the clusters contribute separating the clusters in a meaningful way, not in a marginal way. The first 3 clusters are clearly important; beyond cluster 7 a clear cut-off is not obvious.
+
+## NbClust
+The NbClust package provides 30 indices for determining the relevant number of clusters and proposes to users the best clustering scheme from the different results obtained by varying all combinations of number of clusters, distance measures, and clustering methods.
+
+```{r nbclust, eval = FALSE, echo = FALSE}
+  res_nbclust <- NbClust::NbClust(mat_scaled,
+      distance = "euclidean",
+      min.nc = 3, max.nc = 7, 
+      method = "average",
+      index = "all")
+```
+
+Ok. It doesn't work. I'll go with the elbow method.
+
+## k-means
+
+```{r kmeans}
+  # Execution of k-means with nk clusters
+  nk <- 7
+  
+  mat_kmeans <- kmeans(mat_scaled, nk, nstart = 30, iter.max = 30)
+  fviz_cluster(mat_kmeans, data = mat_scaled) + theme_minimal() + ggtitle(paste("k =", nk, sep=""))
+```
+
+Wow, this looks awesome!
+
+# Representative images
+Now that I have my clusters, I will explore these groups.
+
+```{r assign_cluster}
+  # asssign cluster
+  detr_sub$cluster <- mat_kmeans$cluster
+
+  # summary
+  table(detr_sub$cluster)
+```
+
+Now I will extract some collages.
+
+```{r make_collage}
+  # extract images
+  library(magick) 
+
+  # loop to find images and make collages
+  for(TYPE in unique(detr_sub$cluster)) {
+    
+    # number of objects for TYPE
+    n <- length(detr_sub$cluster[detr_sub$cluster %in% TYPE])
+
+    # determine up to 25 random images
+    if(n <= 25) INDEX <- 1:n else INDEX <- sample(1:n, 25)
+    
+    # load images
+    img_sample <- vector()
+    for(i in 1:length(INDEX)) {
+      img_name    <- paste("/scratch/data/images/", detr_sub$filename[detr_sub$cluster %in% TYPE][i], sep="")
+      img_sample  <- c(img_sample, img_name)
+    }
+    
+    # collate images
+    collage <- image_read(img_sample) %>%
+                image_montage(tile = '5')
+
+    # add annotation
+    ANNOT         <- paste(TYPE, " (n = ", n, ")", sep="")
+    col_annotated <- image_annotate(collage, ANNOT, size = 20, gravity = "northwest")
+    
+    # make filename
+    FILENAME <- paste(here(), "/data/collages/detritus_collage_cluster", TYPE,  "_n", n, ".png", sep = "")
+    
+    # ---- SAVE IMAGES ----
+    image_write(col_annotated, path = FILENAME, format = "png")
+  }
