@@ -1,5 +1,6 @@
 ---
 title: "2021-12-08 Img collages"
+author: "Sari Giering"
 output: html_document
 editor_options: 
   chunk_output_type: console
