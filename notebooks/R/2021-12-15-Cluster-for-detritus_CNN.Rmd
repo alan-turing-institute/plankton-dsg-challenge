@@ -233,9 +233,12 @@ Ok. It doesn't work. I'll go with the elbow method.
 
 ```{r kmeans}
   # Execution of k-means with nk clusters
-  nk <- 7
+  nk <- 8
   
+  # carry out clustering
   mat_kmeans <- kmeans(mat_scaled, nk, nstart = 30, iter.max = 30)
+  
+  # visualize clusters
   fviz_cluster(mat_kmeans, data = mat_scaled) + theme_minimal() + ggtitle(paste("k =", nk, sep=""))
 ```
 

@@ -1,0 +1,105 @@
+---
+  title: "2021-12-08 Img collages"
+  author: "Sari Giering"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+  
+  ```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Background
+I'm exploring whether I can make a fun collage for the press release.
+
+I got the code from rviews.rstudio.com/2020/02/13/photo-mosaics-in-r/.
+
+The post actually only explains how to do it, and the actual code is in the 
+package description.
+
+First you have to convert your images into tiles.
+There was an issue with this function and I had to modify it (after line 15) using
+the fix command. The actual code is provided in the comment section
+of the blog post (screen shot).
+The typed version is here in the markdown file.
+
+Also, the code only works on jpeg files, so the initial step was to
+convert the images from tif to jpeg. I only used the first 5000 images
+and hope it'll be fine.
+
+```{r load-images}
+  install.packages("RsimMosaic")
+  library(RsimMosaic)
+  library(tiff)
+  library(jpeg)
+
+  # convert some tifs to jpeg
+  for(i in 1:5000){
+    IMG  <- index_all$filename[i]
+    OUT  <- sub(".tif", ".jpeg", IMG) 
+    img  <- readTIFF(paste("/scratch/data/images/", IMG, sep = ""))
+    writeJPEG(img, target = paste("/home/sari.giering/Documents/images/", OUT, sep = ""), quality = 1)
+  }
+
+  # path for images
+  path_to_img<- file.path("/home/sari.giering/Documents/images")
+  
+  # path to tiles
+  path_to_tiles<- file.path("/home/sari.giering/Documents/tiles")
+
+  createTiles2 <- createTiles
+  createTiles3 <- createTiles2
+  fix(createTiles3)
+  
+  # add following after line 15
+  # print(filenameArray[i])
+  
+  # add this after previous line
+    #      tryCatch(
+    #         expr = { # Your code goes here...
+    #             img <- jpeg::readJPEG(paste(inPath, "/", filenameArray[i], 
+    #                                                 sep = ""))
+    #             intrpArray <- array(dim = c(tileHeight, tileHeight/dim(img)[1] * 
+    #                                             dim(img)[2], 3))
+    #             intrpArray[, , 1] <- bilinearInterpolator(img[, , 1], 
+    #                                                       dim(intrpArray)[1], dim(intrpArray)[2])
+    #             intrpArray[, , 2] <- bilinearInterpolator(img[, , 2], 
+    #                                                       dim(intrpArray)[1], dim(intrpArray)[2])
+    #             intrpArray[, , 3] <- bilinearInterpolator(img[, , 3], 
+    #                                                       dim(intrpArray)[1], dim(intrpArray)[2])
+    #             jpeg::writeJPEG(intrpArray[1:tileHeight, 1:tileHeight, 
+    #             ], paste(outPath, filenameArray[i], sep = ""))
+    #         },
+    #         error = function(e){
+    #             # (Optional)
+    #             # Do this if an error is caught...
+    #         },
+    #         warning = function(w){
+    #             # (Optional)
+    #             # Do this if an error is caught...
+    #         },
+    #         finally = {
+    #             # (optional)
+    #             # Do this at the end before quitting the tryCatch structure...
+    #         }
+    #     )
+    # }
+  
+  # create tiles
+  createTiles3(path_to_img, path_to_tiles, tileHeight = 30)
+```
+
+```{r make_mosaic}
+  # set file name for base image
+  setwd("/home/sari.giering/Downloads")
+  path_to_origin <- file.path("/home/sari.giering/Downloads", "copepod_50.jpg")
+  
+  # load images for tiles
+  path_to_tiles <- file.path("/home/sari.giering/Documents/tiles")
+  
+  # path for output
+  path_to_output <- file.path("/home/sari.giering/Downloads/mosaic_4.jpg")
+  
+  composeMosaicFromImageRandom(path_to_origin, path_to_output, path_to_tiles, removeTiles = FALSE)
+```
